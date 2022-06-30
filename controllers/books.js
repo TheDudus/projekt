@@ -1,17 +1,17 @@
 import {v4 as uuidv4} from "uuid";
 
-let books = [
-    {
-        title: "Harry Portier",
-        author: "J.K.Rowling",
-        realseDate: 2002
-    },
-    {
-        title: "Przygody Dawida",
-        author: "WSEI",
-        realseDate: 2002
-    }
-]
+// let books = [
+//     {
+//         title: "Harry Portier",
+//         author: "J.K.Rowling",
+//         realseDate: 2002
+//     },
+//     {
+//         title: "Przygody Dawida",
+//         author: "WSEI",
+//         realseDate: 2002
+//     }
+// ]
 
 export const createBook = (req, res) => {
     const book = req.body;
@@ -21,7 +21,7 @@ export const createBook = (req, res) => {
     res.send(`Book with the title ${book.title} added to the database!`);
 }
 
-export const getUser = (req, res) => {
+export const getBook = (req, res) => {
     console.log(books);
 
     res.send(books);

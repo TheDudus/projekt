@@ -1,30 +1,44 @@
-import {v4 as uuidv4} from "uuid";
+import ModelUser from "../models/modelUser.js";
+import modelUser from "../models/modelUser.js";
 
-let users = [
-    {
-        firstName: "Jan",
-        lastName: "Kowalski",
-        age: 22
-    },
-    {
-        firstName: "Mark",
-        lastName: "Moore",
-        age: 27
-    }
-]
+// let users = [
+//     {
+//         firstName: "Jan",
+//         lastName: "Kowalski",
+//         age: 22
+//     },
+//     {
+//         firstName: "Mark",
+//         lastName: "Moore",
+//         age: 27
+//     }
+// ]
 
-export const createUser = (req, res) => {
+//POST
+export const createUser = async (req, res) => {
     const user = req.body;
 
-    users.push({ ...user, id: uuidv4() });
+    const newUser = new modelUser(user); //schemat usera z modelUser.js
 
-    res.send(`User with the name ${user.firstName} added to the database!`);
+    try{
+        await newUser.save();
+
+        res.status(201).json(newUser); //return kod 201 użytkownik utworzony zwraca nowego użytkownika
+    } catch (error){
+        res.secure(409).json({message: error.message}); // 409 konflikt nie został przetworzony
+    }
 }
+//GET
+export const getUser = async (req, res) => {
+    try{
+        const findUsers = await ModelUser.find(); //wyszukiwanie informacji w modelu wymagane async
 
-export const getUser = (req, res) => {
-    console.log(users);
+        console.log(findUsers);
 
-    res.send(users);
+        res.status(200).json(findUsers); //return kod 200 wszystko ok, zwraca użytkowników
+    } catch (error){
+        res.status(404).json({message: error.message}); //404 błąd
+    }
 }
 
 export const singleUser = (req, res) => {
