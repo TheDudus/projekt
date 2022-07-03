@@ -1,5 +1,6 @@
 import ModelUser from "../models/modelUser.js";
 import modelUser from "../models/modelUser.js";
+import mongoose from "mongoose";
 
 // let users = [
 //     {
@@ -42,39 +43,31 @@ export const getUser = async (req, res) => {
 }
 
 export const singleUser = (req, res) => {
-        const {id} = req.params;
+        /*const {id} = req.params;
 
         const foundUser = users.find((user) => user.id == id);
 
-        res.send(foundUser);
+        res.send(foundUser);*/
 }
+//DELETE
+export const deleteUser = async (req, res) => {
+    const { id: _id } = req.params;
 
-export const deleteUser = (req, res) => {
-    const { id } = req.params;
+    if(!mongoose.Types.ObjectId.isValid((_id))) return res.status(404).send('Uzytkownik o takim id nie istnieje!');
 
-    users = users.filter((user) => user.id != id);
+    await ModelUser.findByIdAndRemove(_id);
 
-    res.send(`User with the id ${id} deleted from the database!`);
+    res.json('Użytkownik usunięty!');
+
 }
-
-export const updateUser = (req, res) =>{
-    const {id} = req.params;
-
-    const {firstName, lastName, age} = req.body;
-
-    const user = users.find((user) => user.id == id);
-
-    if(firstName){
-        user.firstName = firstName;
+//UPDATE
+export const updateUser = async (req, res) =>{
+    const {id: _id} = req.params;
+    const user = req.body;
+    if(!mongoose.Types.ObjectId.isValid(_id)) {
+        return res.status(404).send('Uzytkownik o takim id nie istnieje!');
     }
+    const updatedUser = ModelUser.findByIdAndUpdate(_id, user, {new: true});
 
-    if(lastName){
-        user.lastName = lastName;
-    }
-
-    if(age){
-        user.age = age;
-    }
-
-    res.send(`User with the id ${id} has been updated`);
+    res.json(updatedUser);
 }
