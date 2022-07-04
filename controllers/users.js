@@ -41,13 +41,17 @@ export const getUser = async (req, res) => {
         res.status(404).json({message: error.message}); //404 błąd
     }
 }
+//GET/id
+export const singleUser = async (req, res) => {
+    const { id: _id } = req.params;
 
-export const singleUser = (req, res) => {
-        /*const {id} = req.params;
+    const user = req.body;
 
-        const foundUser = users.find((user) => user.id == id);
+    if(!mongoose.Types.ObjectId.isValid((_id))) return res.status(404).send('Uzytkownik o takim id nie istnieje!');
 
-        res.send(foundUser);*/
+    const findedUser = await ModelUser.findById(_id, user);
+
+    res.json(findedUser);
 }
 //DELETE
 export const deleteUser = async (req, res) => {
@@ -60,14 +64,16 @@ export const deleteUser = async (req, res) => {
     res.json('Użytkownik usunięty!');
 
 }
-//UPDATE
+//PATCH
 export const updateUser = async (req, res) =>{
     const {id: _id} = req.params;
-    const user = req.body;
-    if(!mongoose.Types.ObjectId.isValid(_id)) {
-        return res.status(404).send('Uzytkownik o takim id nie istnieje!');
-    }
-    const updatedUser = ModelUser.findByIdAndUpdate(_id, user, {new: true});
 
-    res.json(updatedUser);
+    const user = req.body;
+
+    if(!mongoose.Types.ObjectId.isValid((_id))) return res.status(404).send('Uzytkownik o takim id nie istnieje!');
+
+    const updated = await ModelUser.findByIdAndUpdate(_id, user, {new:true});
+
+    res.json(updated);
 }
+
