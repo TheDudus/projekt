@@ -4,12 +4,30 @@ import mongoose from 'mongoose';
 
 import usersRoutes from './routes/users.js';
 import booksRoutes from './routes/books.js';
+import registerRoutes from "./routes/register.js";
+import loginRoutes from "./routes/login.js";
+
 import Users from "./routes/users.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
+
+app.set('view-engine','ejs');
+app.use(express.urlencoded({extended:false})); //Pobieranie z formularzy views, name field
+
+/*app.get('/login', (req, res) => {
+    res.render('login.ejs')
+});
+
+app.get('/register', (req, res) => {
+    res.render('register.ejs')
+});*/
+
+app.use('/login', loginRoutes); //Login user routes
+
+app.use('/register', registerRoutes); //Register user routes
 
 app.use('/users', usersRoutes); //Users routes
 
@@ -34,15 +52,3 @@ mongoose.connection.on("disconnected", function () {
 
 
 
-/*
-const users = new Users(
-    {
-        firstName: 'Jan',
-        lastName: 'Kowalski',
-        age: 22
-    });
-users.save().then(() => {
-    console.log(users);
-}).catch(error => {
-    console.log(error);
-});*/

@@ -1,5 +1,4 @@
 import ModelUser from "../models/modelUser.js";
-import modelUser from "../models/modelUser.js";
 import mongoose from "mongoose";
 
 // let users = [
@@ -19,7 +18,7 @@ import mongoose from "mongoose";
 export const createUser = async (req, res) => {
     const user = req.body;
 
-    const newUser = new modelUser(user); //schemat usera z modelUser.js
+    const newUser = new ModelUser(user); //schemat usera z modelUser.js
 
     try{
         await newUser.save();
