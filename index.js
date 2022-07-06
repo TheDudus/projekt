@@ -1,13 +1,28 @@
+if(process.env.NODE_ENV !== 'production'){
+    dotenv.config();
+}
+
 import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import passport from "passport";
+import flash from 'express-flash';
+import session from 'express-session';
+import * as dotenv from 'dotenv'
 
 import usersRoutes from './routes/users.js';
 import booksRoutes from './routes/books.js';
 import registerRoutes from "./routes/register.js";
 import loginRoutes from "./routes/login.js";
+import AuthUser from "./models/authUsers.js";
 
-import Users from "./routes/users.js";
+import initializePassport from "./passport-config.js";
+
+initializePassport(
+    passport,
+    email => AuthUser.findOne(email),
+    id => AuthUser.findById(id)
+)
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,13 +32,15 @@ app.use(bodyParser.json());
 app.set('view-engine','ejs');
 app.use(express.urlencoded({extended:false})); //Pobieranie z formularzy views, name field
 
-/*app.get('/login', (req, res) => {
-    res.render('login.ejs')
-});
+app.use(flash());
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+}));
 
-app.get('/register', (req, res) => {
-    res.render('register.ejs')
-});*/
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/login', loginRoutes); //Login user routes
 

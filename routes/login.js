@@ -1,6 +1,7 @@
 import express  from "express";
 
-import {getLogin,postLogin} from "../controllers/login.js";
+import {getLogin} from "../controllers/login.js";
+import passport from "passport";
 
 
 const router = express.Router();
@@ -8,6 +9,12 @@ const router = express.Router();
 //Wszystkie zaczynają się od /login - określone w index.js
 
 router.get('/', getLogin); //GET
-router.post('/',postLogin); //POST
+
+
+router.post('/', passport.authenticate('local', { //POST //TODO FIX local thing
+    successRedirect: '/users',
+    failureRedirect: '/login',
+    failureFlash: true
+}));
 
 export default  router;
