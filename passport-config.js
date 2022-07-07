@@ -1,4 +1,4 @@
-import LocalStrategy from "passport";
+import LocalStrategy from "passport-local";
 import bcrypt from "bcrypt";
 import router from "./routes/login.js";
 
@@ -24,14 +24,13 @@ function initialize(passport, getUserByEmail, getUserById){
         }
 
     }
-    passport.use(new LocalStrategy.Strategy({
-        usernameField: 'email'}, authenticateUser));
+    passport.use(new LocalStrategy.Strategy({usernameField: 'email'}, authenticateUser));
     passport.serializeUser((user, done) => done(null, user.id));
-    passport.deserialize((id, done) => {
+    passport.deserializeUser((id, done) => {
         return done(null, getUserById(id))
     })
 
 }
 
-//export default initialize();
-export default  router;
+export default initialize;
+//export default  router;
