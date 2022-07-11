@@ -1,19 +1,6 @@
 import ModelUser from "../models/modelUser.js";
 import mongoose from "mongoose";
 
-// let users = [
-//     {
-//         firstName: "Jan",
-//         lastName: "Kowalski",
-//         age: 22
-//     },
-//     {
-//         firstName: "Mark",
-//         lastName: "Moore",
-//         age: 27
-//     }
-// ]
-
 //POST
 export const createUser = async (req, res) => {
     const user = req.body;

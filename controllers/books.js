@@ -1,66 +1,64 @@
-import {v4 as uuidv4} from "uuid";
+import ModelBook from "../models/modelBook.js";
+import mongoose from "mongoose";
 
-// let books = [
-//     {
-//         title: "Harry Portier",
-//         author: "J.K.Rowling",
-//         realseDate: 2002
-//     },
-//     {
-//         title: "Przygody Dawida",
-//         author: "WSEI",
-//         realseDate: 2002
-//     }
-// ]
-
-export const createBook = (req, res) => {
+//POST
+export const createBook = async (req, res) => {
     const book = req.body;
 
-    users.push({ ...book, id: uuidv4() });
+    const newBook = new ModelBook(book);
 
-    res.send(`Book with the title ${book.title} added to the database!`);
-}
+    try{
+        await newBook.save();
 
-export const getBook = (req, res) => {
-    console.log(books);
-
-    res.send(books);
-}
-
-export const singleBook = (req, res) => {
-        const {id} = req.params;
-
-        const foundBook = book.find((book) => book.id == id);
-
-        res.send(foundBook);
-}
-
-export const deleteBook = (req, res) => {
-    const { id } = req.params;
-
-    books = books.filter((book) => book.id != id);
-
-    res.send(`Book with the id ${id} (title: ${title}) deleted from the database!`);
-}
-
-export const updateBook = (req, res) =>{
-    const {id} = req.params;
-
-    const {title, author, realseDate} = req.body;
-
-    const book = books.find((book) => book.id == id);
-
-    if(title){
-        book.title = title;
+        res.status(201).json(newBook);
+    } catch (error){
+        res.secure(409).json({message: error.message}); //
     }
+}
 
-    if(author){
-        book.author = author;
+//GET
+export const getBook = async(req, res) => {
+    try{
+        const findBooks = await ModelBook.find();
+
+        console.log(findBooks);
+
+        res.status(200).json(findBooks);
+    } catch (error){
+        res.status(404).json({message: error.message});
     }
+}
 
-    if(realsedate){
-        book.realseDate = realseDate;
-    }
+export const singleBook = async (req, res) => {
+    const { id: _id } = req.params;
 
-    res.send(`Book with the id ${id} (title: ${title}) has been updated`);
+    const book = req.body;
+
+    if(!mongoose.Types.ObjectId.isValid((_id))) return res.status(404).send('Książka o takim id nie istnieje!');
+
+    const findedBook = await ModelBook.findById(_id, book);
+
+    res.json(findedBook);
+}
+
+export const deleteBook = async (req, res) => {
+    const { id: _id } = req.params;
+
+    if(!mongoose.Types.ObjectId.isValid((_id))) return res.status(404).send('Książka o takim id nie istnieje!');
+
+    await ModelUser.findByIdAndRemove(_id);
+
+    res.json('Książka usunięta!');
+}
+
+export const updateBook = async (req, res) =>{
+    const {id: _id} = req.params;
+
+    const book = req.body;
+
+    if(!mongoose.Types.ObjectId.isValid((_id))) return res.status(404).send('Uzytkownik o takim id nie istnieje!');
+
+    const updated = await ModelBook.findByIdAndUpdate(_id, book, {new:true});
+
+    res.json(updated);
 }
