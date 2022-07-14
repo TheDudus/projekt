@@ -9,19 +9,21 @@ import passport from "passport";
 import flash from 'express-flash';
 import session from 'express-session';
 import * as dotenv from 'dotenv'
+import methodOverride from 'method-override';
 
 import usersRoutes from './routes/users.js';
 import booksRoutes from './routes/books.js';
 import registerRoutes from "./routes/register.js";
 import loginRoutes from "./routes/login.js";
-import AuthUser from "./models/authUsers.js";
+import ModelUser from "./models/modelUser.js";
+
 
 import initializePassport from "./passport-config.js";
 
 initializePassport(
     passport,
-    email => AuthUser.findOne(email),
-    id => AuthUser.findById(id)
+    email => ModelUser.findOne({email: email}),
+    id => ModelUser.findById(id)
 )
 
 const app = express();
@@ -41,14 +43,26 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(methodOverride('_method'));
+
+app.get('/', checkAuthenticated, (req, res) => {
+    res.render('index.ejs', {name: req.session.user.email})
+});
 
 app.use('/login', loginRoutes); //Login user routes
 
 app.use('/register', registerRoutes); //Register user routes
 
-app.use('/users', usersRoutes); //Users routes
+app.use('/users', checkAuthenticated, usersRoutes); //Users routes
 
-app.use('/books', booksRoutes);//Books routes
+app.use('/books', checkAuthenticated, booksRoutes);//Books routes
+
+app.delete('/logout', (req, res, next) => {
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        res.redirect('/login');
+    });
+});
 
 app.listen(PORT, () => console.log(`Server running on port: http://localhost:${PORT}`));
 
@@ -67,5 +81,19 @@ mongoose.connection.on("disconnected", function () {
     console.log("Disconnecting from the database.");
 });
 
+function checkAuthenticated(req, res, next) {
 
+    if (req.isAuthenticated()) {
+        return next()
+    }
+
+    res.redirect('/login')
+}
+
+/*function  checkNotAuthenticated(req, res, next){
+    if(req.isAuthenticated()){
+        res.redirect('/');
+    }
+    next();
+}*/
 

@@ -1,10 +1,10 @@
 import LocalStrategy from "passport-local";
 import bcrypt from "bcrypt";
-import router from "./routes/login.js";
+
 
 function initialize(passport, getUserByEmail, getUserById){
     const authenticateUser = async (email, password, done)  => {
-        const user = getUserByEmail(email);
+        const user = await getUserByEmail(email);
         if(user == null)
         {
             return done(null, false, {message:'Brak takiego użytkownika'});
@@ -25,12 +25,23 @@ function initialize(passport, getUserByEmail, getUserById){
 
     }
     passport.use(new LocalStrategy.Strategy({usernameField: 'email'}, authenticateUser));
-    passport.serializeUser((user, done) => done(null, user.id));
+
+    passport.serializeUser(function(user, done) {
+        process.nextTick(function() {
+            return done(null, {
+                id: user.id,
+                email: user.email,
+            });
+        });
+    });
+
     passport.deserializeUser((id, done) => {
-        return done(null, getUserById(id))
+        process.nextTick(function() {
+            return done(null, getUserById({_id: id}))
+        });
+
     })
 
 }
 
 export default initialize;
-//export default  router;

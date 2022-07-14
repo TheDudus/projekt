@@ -1,23 +1,28 @@
-import express  from "express";
+import express from "express";
 import passport from "passport";
-
 
 
 const router = express.Router();
 
 //Wszystkie zaczynają się od /login - określone w index.js
 
-router.get('/', (req,res)=>{
+router.get('/', checkNotAuthenticated, (req, res) => {
     res.render('login.ejs')
 }); //GET
 
+function checkNotAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return res.redirect('/')
+    }
+    next()
+}
 
-router.post('/', passport.authenticate('local',{
-    successRedirect: '/users',
+router.post('/', checkNotAuthenticated, passport.authenticate('local', {
     failureRedirect: '/login',
-    failureFlash: true},
-    function (req, res) {
-        console.log(req.user);
-    }));
+    failureMessage: true
+}), function (req, res) {
+    req.session.user = req.user;
+    res.redirect('/');
+})
 
-export default  router;
+export default router;

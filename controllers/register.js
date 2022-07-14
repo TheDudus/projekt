@@ -1,11 +1,12 @@
 import bcrypt from "bcrypt";
-import AuthUser from "../models/authUsers.js";
+
+import ModelUser from "../models/modelUser.js";
 
 //POST
 export const postRegister = async (req, res) => {
     try{
         const hashedPassword = await bcrypt.hash(req.body.password,10);
-        const newAuth = new AuthUser({
+        const newAuth = new ModelUser({
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword
