@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import sendMail from "../mailSender.js";
 
 import ModelUser from "../models/modelUser.js";
 
@@ -13,7 +14,9 @@ export const postRegister = async (req, res) => {
         });
 
         await newAuth.save();
+        /*
 
+        */
         res.redirect('/login');
     } catch(error){
         res.secure(409).json({message: error.message}); // 409 konflikt nie został przetworzony
@@ -22,6 +25,11 @@ export const postRegister = async (req, res) => {
 }
 
 //GET
-export const getRegister = (req,res) => {
+export const getRegister = async (req,res) => {
+    await sendMail(
+        "kolef22278@dnitem.com",
+        "Zarejestrowano nowego użytkownika",
+        "Witaj, z tego adresu e-mail zarejestrowano nowego użytkownika"
+    );
     res.render('register.ejs');
 }

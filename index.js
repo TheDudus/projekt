@@ -15,6 +15,7 @@ import methodOverride from 'method-override';
 import usersRoutes from './routes/users.js';
 import booksRoutes from './routes/books.js';
 import moviesRoutes from './routes/movies.js';
+import songsRoutes from './routes/songs.js';
 import registerRoutes from "./routes/register.js";
 import loginRoutes from "./routes/login.js";
 import ModelUser from "./models/modelUser.js";
@@ -60,6 +61,8 @@ app.use('/users', checkAuthenticated, usersRoutes); //Users routes
 app.use('/books', checkAuthenticated, booksRoutes);//Books routes
 
 app.use('/movies', checkAuthenticated, moviesRoutes);//Movies routes
+
+app.use('/songs', checkAuthenticated, songsRoutes);//Songs routes
 
 app.delete('/logout', (req, res, next) => {
     req.logout(function(err) {

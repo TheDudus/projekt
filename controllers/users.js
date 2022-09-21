@@ -11,6 +11,8 @@ export const createUser = async (req, res) => {
         await newUser.save();
 
         res.status(201).json(newUser); //return kod 201 użytkownik utworzony zwraca nowego użytkownika
+        console.log(newUser);
+
     } catch (error){
         res.secure(409).json({message: error.message}); // 409 konflikt nie został przetworzony
     }
