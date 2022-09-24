@@ -34,7 +34,7 @@ export const singleMovie = async (req, res) => {
 
     const movie = req.body;
 
-    if(!mongoose.Types.ObjectId.isValid((user_id))) return res.status(404).send('Film o takim id nie istnieje!');
+    if(!mongoose.Types.ObjectId.isValid((_id))) return res.status(404).send('Film o takim id nie istnieje!');
 
     const findedMovie = await ModelMovie.findById(_id, movie);
 

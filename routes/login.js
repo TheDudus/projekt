@@ -1,5 +1,6 @@
 import express from "express";
 import passport from "passport";
+import sendMail from "../mailSender.js";
 
 
 const router = express.Router();
@@ -20,9 +21,14 @@ function checkNotAuthenticated(req, res, next) {
 router.post('/', checkNotAuthenticated, passport.authenticate('local', {
     failureRedirect: '/login',
     failureMessage: true
-}), function (req, res) {
+}),async function (req, res) {
     req.session.user = req.user;
     res.redirect('/');
+    await sendMail(
+        req.body.email,
+        'Zalogowano się na twoje konto',
+        'Zalogowano się na twoje konto!'
+    );
 })
 
 export default router;

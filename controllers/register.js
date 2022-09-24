@@ -14,9 +14,13 @@ export const postRegister = async (req, res) => {
         });
 
         await newAuth.save();
-        /*
 
-        */
+        await sendMail(
+            req.body.email,
+            'Zarejestrowano nowego użytkownika',
+            'Witaj, ' + req.body.name + ' z tego adresu e-mail zarejestrowano nowego użytkownika'
+        );
+
         res.redirect('/login');
     } catch(error){
         res.secure(409).json({message: error.message}); // 409 konflikt nie został przetworzony
@@ -26,10 +30,6 @@ export const postRegister = async (req, res) => {
 
 //GET
 export const getRegister = async (req,res) => {
-    await sendMail(
-        "kolef22278@dnitem.com",
-        "Zarejestrowano nowego użytkownika",
-        "Witaj, z tego adresu e-mail zarejestrowano nowego użytkownika"
-    );
+
     res.render('register.ejs');
 }
